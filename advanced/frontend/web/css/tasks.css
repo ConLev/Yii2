@@ -1,0 +1,42 @@
+.preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.task-container {
+    width: 235px;
+    height: 160px;
+    margin: 12px;
+}
+
+.task-preview-link {
+    color: inherit;
+}
+
+.task-preview-link:hover {
+    text-decoration: none;
+}
+
+.task-preview {
+    box-sizing: border-box;
+    border: 1px solid dimgray;
+    margin-top: 40px;
+    padding: 12px;
+}
+
+#tasks-deadline {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
