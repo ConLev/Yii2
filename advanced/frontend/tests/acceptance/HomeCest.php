@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\tests\acceptance;
 
 use frontend\tests\AcceptanceTester;
@@ -12,9 +13,13 @@ class HomeCest
         $I->see('My Application');
 
         $I->seeLink('About');
+        $I->wait(2);
         $I->click('About');
-        $I->wait(2); // wait for page to be opened
-
         $I->see('This is the About page.');
+        $I->wait(2);
+        $I->click('Contact');
+        $I->wait(2);
+        $I->fillField('ContactForm[name]', 'User');
+        $I->wait(2); // wait for page to be opened
     }
 }
