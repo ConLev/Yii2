@@ -1,4 +1,5 @@
 <?php
+
 namespace frontend\controllers;
 
 use frontend\models\ResendVerificationEmailForm;
@@ -67,6 +68,12 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionLang($lang)
+    {
+        Yii::$app->session->set('lang', $lang);
+        $this->redirect(Yii::$app->request->referrer);
+    }
+
     /**
      * Displays homepage.
      *
@@ -109,7 +116,8 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+//        return $this->goHome();
+        return $this->redirect(Yii::$app->request->getReferrer());
     }
 
     /**
@@ -216,8 +224,8 @@ class SiteController extends Controller
      * Verify email address
      *
      * @param string $token
-     * @throws BadRequestHttpException
      * @return yii\web\Response
+     * @throws BadRequestHttpException
      */
     public function actionVerifyEmail($token)
     {
