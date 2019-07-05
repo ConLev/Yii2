@@ -1,4 +1,8 @@
 <?php
+
+use frontend\components\Bootstrap;
+use yii\i18n\PhpMessageSource;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -8,10 +12,22 @@ $params = array_merge(
 
 return [
     'id' => 'app-frontend',
+    'language' => 'ru',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'bootstrap'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => PhpMessageSource::class,
+                    'basePath' => '@app/messages'
+                ]
+            ]
+        ],
+        'bootstrap' => [
+            'class' => Bootstrap::class
+        ],
         'view' => [
             'theme' => [
                 'basePath' => '@app/themes/test',

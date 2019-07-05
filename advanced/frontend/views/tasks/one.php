@@ -76,7 +76,7 @@ TasksAsset::register($this);
         <?= $form->field($taskAttachmentForm, 'taskId')->hiddenInput(['value' => $model->id])->label(false); ?>
         <?= $form->field($taskAttachmentForm, 'attachment')->fileInput()
             ->label(Yii::t('app', 'task_attachments')); ?>
-        <?= Html::submitButton("Добавить", ['class' => 'btn btn-default']); ?>
+        <?= Html::submitButton("Загрузить", ['class' => 'btn btn-default']); ?>
         <? ActiveForm::end() ?>
         <hr>
         <div class="attachments-history">
