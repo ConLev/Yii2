@@ -2,32 +2,30 @@ if (!window.WebSocket) {
     alert("Ваш браузер не поддерживает Веб-сокеты");
 }
 
-var webSocket = new WebSocket("ws://front.tasks.site:8080");
+var webSocket = new WebSocket("ws://front.tasks.site:8080?channel=" + channel);
 
 document.getElementById("chat_form")
     .addEventListener("submit", function (event) {
         event.preventDefault();
-        var message ={
-            "message": this.message.value,
-            "task_id": this.task_id.value,
-            "user_id": this.user_id.value
+        var data = {
+            message: this.message.value,
+            user_id: this.user_id.value,
+            channel: this.channel.value
         };
 
-        console.log(message);
-        message = JSON.stringify(message);
-        console.log(message);
-        webSocket.send(message);
+        webSocket.send(JSON.stringify(data));
         return false;
     });
 
 webSocket.onmessage = function (event) {
-    var data = event.data;
-    var message = JSON.parse(data);
-    console.log(message);
-    console.log(message.message);
+    var data = JSON.parse(event.data);
     var messageContainer = document.createElement('div');
-    var textNode = document.createTextNode(message.message);
-    messageContainer.appendChild(textNode);
-    document.getElementById("chat")
+    var username = document.createElement('span');
+    username.innerHTML = data.username;
+    messageContainer.appendChild(username);
+    var message = document.createElement('span');
+    message.innerHTML = data.message;
+    messageContainer.appendChild(message);
+    document.getElementById("ws_chat")
         .appendChild(messageContainer);
 };

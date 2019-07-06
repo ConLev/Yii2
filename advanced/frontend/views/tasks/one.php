@@ -11,6 +11,7 @@ use yii\jui\DatePicker;
 use \yii\widgets\ActiveForm;
 use \yii\helpers\Url;
 use \yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /** @var TaskComments $taskCommentForm */
 /** @var TaskAttachmentsAddForm $taskAttachmentForm */
@@ -19,7 +20,17 @@ TasksAsset::register($this);
 ?>
     <div class="task-edit">
         <div class="task-main">
-            <?php $form = ActiveForm::begin(['action' => Url::to(['tasks/save', 'id' => $model->id])]); ?>
+            <?php Pjax::begin([
+                'id' => 'task_edit',
+                'timeout' => false,
+                'enablePushState' => false,
+                'formSelector' => '#task_edit'
+            ]) ?>
+            <?php $form = ActiveForm::begin([
+                'id' => 'task_edit',
+                'options' => ['data-pjax' => true],
+                'action' => Url::to(['tasks/save', 'id' => $model->id])
+            ]); ?>
             <?= $form->field($model, 'name')->textInput(); ?>
             <div class="row">
                 <div class="col-lg-4">
@@ -63,6 +74,7 @@ TasksAsset::register($this);
                 <?= Html::submitButton("Сохранить", ['class' => 'btn btn-success']); ?>
             <?php endif ?>
             <? ActiveForm::end() ?>
+            <?php Pjax::end() ?>
             <!--        <button class="push-me-btn">Push</button>-->
         </div>
     </div>
@@ -100,16 +112,26 @@ TasksAsset::register($this);
                 <p><strong><?= $comment->user->username ?></strong>: <?= $comment->content ?></p>
             <?php endforeach; ?>
         </div>
-        <form action="#" name="chat_form" id="chat_form">
-            <label>
-                введите сообщение
-                <input type="text" name="message"/>
-                <input type="hidden" name="task_id" value="<?= $model->id ?>"/>
-                <input type="hidden" name="user_id" value="<?= $userId ?>"/>
-                <input type="submit"/>
-            </label>
-        </form>
         <hr>
-        <div id="chat"></div>
+        <div class="chat-history">
+            <? foreach ($chatHistory as $data): ?>
+                <p><strong><?= $data->user->username ?></strong>: <?= $data->message ?></p>
+            <?php endforeach; ?>
+        </div>
+        <div id="ws_chat"></div>
+        <div class="task-chat">
+            <form action="#" name="chat_form" id="chat_form">
+                <label>
+                    <input type="hidden" name="channel" value="<?= $channel ?>"/>
+                    <input type="hidden" name="user_id" value="<?= $userId ?>"/>
+                    введите сообщение
+                    <input type="text" name="message"/>
+                    <input type="submit"/>
+                </label>
+            </form>
+        </div>
     </div>
+    <script>
+        var channel = '<?=$channel?>';
+    </script>
 <?php //endif;
