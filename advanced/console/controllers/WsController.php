@@ -2,7 +2,7 @@
 
 namespace console\controllers;
 
-use frontend\controllers\Chat;
+use console\components\Chat;
 use Ratchet\Http\HttpServer;
 use Ratchet\Server\IoServer;
 use Ratchet\WebSocket\WsServer;

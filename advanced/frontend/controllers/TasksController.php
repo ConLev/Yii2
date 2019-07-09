@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\tables\Chat;
 use frontend\models\forms\TaskAttachmentsAddForm;
 use common\models\tables\TaskComments;
 use common\models\tables\TaskStatuses;
@@ -74,6 +75,10 @@ class TasksController extends Controller
 
     public function actionOne($id)
     {
+        $chatHistory = Chat::find()
+            ->where(['channel' => 'Task_' . $id])
+            ->all();
+
         return $this->render("one", [
             'model' => Tasks::findOne($id),
             'statusesList' => TaskStatuses::getStatusesList(),
@@ -81,6 +86,8 @@ class TasksController extends Controller
             'taskCommentForm' => new TaskComments(),
             'taskAttachmentForm' => new TaskAttachmentsAddForm(),
             'userId' => Yii::$app->user->id,
+            'channel' => 'Task_' . $id,
+            'chatHistory' => $chatHistory
         ]);
     }
 
@@ -101,22 +108,35 @@ class TasksController extends Controller
         if ($model = Tasks::findOne($id)) {
             $model->load(Yii::$app->request->post());
             $model->save();
-            Yii::$app->session->setFlash('success', "Отредактировано");
-        } else {
-            Yii::$app->session->setFlash('error', "Ошибка!");
+//            Yii::$app->session->setFlash('success', "Отредактировано");
+//        } else {
+//            Yii::$app->session->setFlash('error', "Ошибка!");
+            return $this->renderAjax('_tasks_save',
+                [
+                    'model' => $model,
+                    'statusesList' => TaskStatuses::getStatusesList(),
+                    'usersList' => Users::getUsersList(),
+                ]);
         }
-        $this->redirect(Yii::$app->request->referrer);
+//        $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionAddComment()
     {
         $model = new TaskComments();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', "Комментарий добавлен");
-        } else {
-            Yii::$app->session->setFlash('error', "Ошибка!");
+//            Yii::$app->session->setFlash('success', "Комментарий добавлен");
+//        } else {
+//            Yii::$app->session->setFlash('error', "Ошибка!");
+            $id = $model->task_id;
+            return $this->renderAjax('_comments',
+                [
+                    'model' => Tasks::findOne($id),
+                    'taskCommentForm' => new TaskComments(),
+                    'userId' => Yii::$app->user->id,
+                ]);
         }
-        $this->redirect(Yii::$app->request->referrer);
+//        $this->redirect(Yii::$app->request->referrer);
     }
 
     /**
@@ -128,10 +148,16 @@ class TasksController extends Controller
         $model->load(Yii::$app->request->post());
         $model->attachment = UploadedFile::getInstance($model, 'attachment');
         if ($model->save()) {
-            Yii::$app->session->setFlash('success', "Файл добавлен");
-        } else {
-            Yii::$app->session->setFlash('error', "Ошибка!");
+//            Yii::$app->session->setFlash('success', "Файл добавлен");
+//        } else {
+//            Yii::$app->session->setFlash('error', "Ошибка!");
+            $id = $model->taskId;
+            return $this->renderAjax('_attachments',
+                [
+                    'model' => Tasks::findOne($id),
+                    'taskAttachmentForm' => new TaskAttachmentsAddForm(),
+                ]);
         }
-        $this->redirect(Yii::$app->request->referrer);
+//        $this->redirect(Yii::$app->request->referrer);
     }
 }
