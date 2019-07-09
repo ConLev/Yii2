@@ -15,7 +15,8 @@ class TasksAsset extends AssetBundle
     ];
 
     public $js = [
-        "js/task.js"
+        "js/task.js",
+        'js/client.js'
     ];
 
     public $depends = [

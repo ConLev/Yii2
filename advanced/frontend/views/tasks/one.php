@@ -100,5 +100,16 @@ TasksAsset::register($this);
                 <p><strong><?= $comment->user->username ?></strong>: <?= $comment->content ?></p>
             <?php endforeach; ?>
         </div>
+        <form action="#" name="chat_form" id="chat_form">
+            <label>
+                введите сообщение
+                <input type="text" name="message"/>
+                <input type="hidden" name="task_id" value="<?= $model->id ?>"/>
+                <input type="hidden" name="user_id" value="<?= $userId ?>"/>
+                <input type="submit"/>
+            </label>
+        </form>
+        <hr>
+        <div id="chat"></div>
     </div>
 <?php //endif;
