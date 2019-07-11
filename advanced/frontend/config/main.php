@@ -77,7 +77,12 @@ return [
             'rules' => [
 //                'GET message/<id>' => 'message/view',
 //                'PATH message/<id>' => 'message/update'
-                ['class' => UrlRule::class, 'controller' => ['v1/message']]
+                [
+//                    'class' => UrlRule::class,
+//                    'controller' => ['v1/message']
+                    'class' => UrlRule::class,
+                    'controller' => ['v1/task']
+                ]
             ],
         ],
     ],
