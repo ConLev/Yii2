@@ -2,6 +2,8 @@
 
 use frontend\components\Bootstrap;
 use yii\i18n\PhpMessageSource;
+use yii\rest\UrlRule;
+use yii\web\JsonParser;
 
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
@@ -16,6 +18,11 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log', 'bootstrap'],
     'controllerNamespace' => 'frontend\controllers',
+    'modules' => [
+        'v1' => [
+            'class' => 'frontend\modules\v1\Module',
+        ],
+    ],
     'components' => [
         'i18n' => [
             'translations' => [
@@ -39,6 +46,9 @@ return [
         ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => JsonParser::class
+            ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -61,14 +71,15 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+//                'GET message/<id>' => 'message/view',
+//                'PATH message/<id>' => 'message/update'
+                ['class' => UrlRule::class, 'controller' => ['v1/message']]
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

@@ -35,7 +35,13 @@ class m190708_134431_create_projects_table extends Migration
 
         $usersTable = Users::tableName();
         $this->addColumn($usersTable, 'telegram_id', $this->integer()->after('email'));
-        $this->addColumn($usersTable, 'subscription', $this->boolean()->after('telegram_id'));
+
+        $this->createTable('telegram_subscribe', [
+            'id' => $this->primaryKey(),
+            'chat_id' => $this->integer()->unique()->notNull(),
+            'channel' => $this->string()->notNull()
+        ]);
+        $this->createIndex("channel_idx", "telegram_subscribe", ['channel']);
     }
 
     /**
@@ -43,6 +49,10 @@ class m190708_134431_create_projects_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('fk_project_id', Tasks::tableName());
+        $this->dropColumn(Tasks::tableName(), 'project_id');
         $this->dropTable('projects');
+        $this->dropColumn(Users::tableName(), 'telegram_id');
+        $this->dropTable('telegram_subscribe');
     }
 }
