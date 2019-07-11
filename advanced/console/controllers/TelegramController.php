@@ -4,7 +4,7 @@ namespace console\controllers;
 
 use common\models\tables\Projects;
 use common\models\tables\TelegramOffset;
-use common\models\tables\Users;
+use common\models\tables\TelegramSubscribe;
 use SonkoDmitry\Yii\TelegramBot\Component;
 use TelegramBot\Api\Types\Message;
 use TelegramBot\Api\Types\Update;
@@ -69,32 +69,24 @@ class TelegramController extends Controller
                 'creator_id' => $creator,
                 'created' => date("Y-m-d H:i:s")
             ]);
-            $model->save();
-        } else {
-            $response = "Вы не ввели обязательный параметр - имя проекта";
-            $this->bot->sendMessage($message->getFrom()->getId(), $response);
-            exit;
+            if ($model->save()) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
-    private function userSubscription(Message $message)
+    private function telegramSubscribe(Message $message)
     {
-        $id = $message->getFrom()->getId();
-        $user = Users::find()
-            ->where(['telegram_id' => $id])
-            ->one();
-        $user->subscription = 1;
-        $user->save();
-    }
-
-    private function sendingMessages($params)
-    {
-        $response = "Создан новый проект: $params[1]\n";
-        $users = Users::find()
-            ->where(['subscription' => 1])
-            ->all();
-        foreach ($users as $user) {
-            $this->bot->sendMessage($user->telegram_id, $response);
+        $model = new TelegramSubscribe([
+            'chat_id' => $message->getFrom()->getId(),
+            'channel' => TelegramSubscribe::CHANNEL_PROJECT_CREATE
+        ]);
+        if ($model->save()) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -112,13 +104,18 @@ class TelegramController extends Controller
                 $response .= "/sp_create - подписка на оповещение о создании новых проектов\n";
                 break;
             case "/project_create":
-                $this->createProject($message);
-                $response = "Вы создали новый проект: $params[1]\n";
-                $this->sendingMessages($params);
+                if ($this->createProject($message)) {
+                    $response = "Вы создали новый проект: $params[1]\n";
+                } else {
+                    $response = "Ошибка!!! Возможно, не указано имя задачи";
+                }
                 break;
             case "/sp_create":
-                $this->userSubscription($message);
-                $response = "Вы подписаны на оповещение о создании новых проектов\n";
+                if ($this->telegramSubscribe($message)) {
+                    $response = "Вы подписаны на оповещения о создании проектов";
+                } else {
+                    $response = "Ошибка!!! Возможно, Вы уже подписаны на оповещение.";
+                }
                 break;
         }
         $this->bot->sendMessage($message->getFrom()->getId(), $response);

@@ -1,6 +1,9 @@
 <?php
 
+use common\components\BootstrapComponent;
+
 return [
+    'bootstrap' => ['bootstrap'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
@@ -9,6 +12,9 @@ return [
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
+        ],
+        'bootstrap' => [
+            'class' => BootstrapComponent::class
         ],
         'bot' => [
             'class' => SonkoDmitry\Yii\TelegramBot\Component::class,
