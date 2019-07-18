@@ -17,15 +17,15 @@ class TaskController extends ActiveController
     {
         $behaviors = parent::behaviors();
         $behaviors['authentificator'] = [
-            'class' => HttpBasicAuth::class,
-//            'class' => HttpBearerAuth::class,
-            'auth' => function ($username, $password) {
-                $user = User::findByUsername($username);
-                if ($user !== null && $user->validatePassword($password)) {
-                    return $user;
-                }
-                return null;
-            }
+            'class' => HttpBearerAuth::class
+            /* 'class' => HttpBasicAuth::class,
+             'auth' => function ($username, $password) {
+                 $user = User::findByUsername($username);
+                 if ($user !== null && $user->validatePassword($password)) {
+                     return $user;
+                 }
+                 return null;
+             } */
         ];
         return $behaviors;
     }
