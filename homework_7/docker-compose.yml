@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+    web:
+        image: php:7.3-apache
+        ports:
+            - 8080:80
+        volumes:
+            - ./src:/var/www/html
+      
+    mariadb:
+        image: mariadb:10.4
+        restart: always
+        volumes:
+            - ./mariadb:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: qwerty
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links: 
+            - mariadb:db
+        ports:
+            - 8765:80
+        environment:
+            MYSQL_ROOT_PASSWORD: qwerty
+        depends_on:
+            - mariadb

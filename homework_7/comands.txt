@@ -1,0 +1,10 @@
+
+docker ps
+docker-compose up --build
+docker-compose up --build -d
+docker-compose up -d
+docker exec -ti mysql_1 bash
+mysql -uroot -pqwerty
+docker stop
+docker rm
+docker rm -f
