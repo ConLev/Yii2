@@ -1,0 +1,16 @@
+$script= <<SCRIPT
+sudo apt-get -y install curl
+wget -qO- https://get.docker.com/ | sh
+usermod -aG docker vagrant
+sudo apt-get -y install python-pip
+sudo pip install docker-compose
+SCRIPT
+
+Vagrant.configure("2") do |config|
+
+	config.vm.box = "bento/ubuntu-16.04"
+	config.vm.box_check_update = false
+
+	config.vm.network :private_network, ip: "192.168.1.161"
+	config.vm.provision "shell", inline: $script
+end
