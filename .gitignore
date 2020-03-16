@@ -1,0 +1,5 @@
+*.xml
+*.iml
+docker/database
+*.txt
+advanced/log

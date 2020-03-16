@@ -1,0 +1,51 @@
+# Последняя версия docker-compose
+version: '3'
+
+# Создаем общую сеть default для всех контейнеров
+networks:
+  default:
+    driver: bridge
+
+# Создаем отдельные контейнеры
+services:
+  # Контейнер с веб-приложением
+  app:
+    container_name: app_yii_advanced
+    # Собираем из Dockerfile 
+    build: 
+      # Корнем указываем корень основного проекта
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    # Показываем наружу 80 порт
+    ports: 
+      - "80:80"
+    # Подключаем к общей сети с другими контейнерами
+    networks: 
+      - default
+    # Запускаем только после db
+    depends_on: 
+      - db    
+    # Линкуем внешнюю папку с исходниками внутрь
+    volumes:
+      - "../advanced:/var/www/advanced"
+      # Так же линкуем конфиг для nginx
+      - "./conf/nginx:/etc/nginx/sites-available"      
+  # Контейнер с базой данных
+  db:
+    container_name: db_yii_advanced
+    image: mysql:latest
+    # Подключаем к общей сети с другими контейнерами
+    networks: 
+      - default
+    # Показываем наружу порт
+    ports:
+      - "3306:3306"
+    # Задаем параметры для инициализации БД
+    environment:
+      # Пароль к БД
+      MYSQL_ROOT_PASSWORD: root
+      # Создаваемая по умолчанию бд
+      MYSQL_DATABASE: db_yii_advanced
+    # Линкуем внешнюю папку для хранения БД
+    volumes:
+      - "./database:/var/lib/mysql"

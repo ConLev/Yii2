@@ -1,11 +1,10 @@
 <?php
 
 use common\models\tables\Tasks;
-use common\models\tables\Users;
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `projects`.
+ * Handles the creation of table 'projects'.
  */
 class m190708_134431_create_projects_table extends Migration
 {
@@ -16,6 +15,11 @@ class m190708_134431_create_projects_table extends Migration
      */
     public function safeUp()
     {
+        $tableOptions = null;
+        if ($this->db->driverName === 'mysql') {
+            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
+        }
+
         $this->createTable('projects', [
             'id' => $this->primaryKey(),
             'name' => $this->string(50)->notNull()->comment("Название проекта"),
@@ -23,24 +27,31 @@ class m190708_134431_create_projects_table extends Migration
             'creator_id' => $this->integer(),
             'created' => $this->dateTime(),
             'updated' => $this->dateTime(),
-        ]);
+        ], $tableOptions);
+
+        $this->batchInsert('projects', ['id', 'name', 'description', 'creator_id', 'created', 'updated'],
+            [
+                [1, 'Таск трекер', 'Разработать таск трекер используя фреймворк Yii2.', 765641979,
+                    '2019-07-10 13:14:59', NULL]
+            ]);
+
         $this->createIndex("project_creator_idx", 'projects', ['creator_id']);
 
-        $taskTable = Tasks::tableName();
-        $this->addColumn($taskTable, 'project_id', $this->integer()->notNull()->after('id'));
-
         $this->createIndex("project_idx", 'tasks', ['project_id']);
-        $this->addForeignKey('fk_project_id', $taskTable,
+        $this->addForeignKey('fk_project_id', 'tasks',
             'project_id', $this->projectsTable, 'id', 'CASCADE', 'NO ACTION');
-
-        $usersTable = Users::tableName();
-        $this->addColumn($usersTable, 'telegram_id', $this->integer()->after('email'));
 
         $this->createTable('telegram_subscribe', [
             'id' => $this->primaryKey(),
             'chat_id' => $this->integer()->unique()->notNull(),
             'channel' => $this->string()->notNull()
-        ]);
+        ], $tableOptions);
+
+        $this->batchInsert('telegram_subscribe', ['id', 'chat_id', 'channel'],
+            [
+                [1, 765641979, 'projects_create']
+            ]);
+
         $this->createIndex("channel_idx", "telegram_subscribe", ['channel']);
     }
 
@@ -50,9 +61,7 @@ class m190708_134431_create_projects_table extends Migration
     public function safeDown()
     {
         $this->dropForeignKey('fk_project_id', Tasks::tableName());
-        $this->dropColumn(Tasks::tableName(), 'project_id');
         $this->dropTable('projects');
-        $this->dropColumn(Users::tableName(), 'telegram_id');
         $this->dropTable('telegram_subscribe');
     }
 }
