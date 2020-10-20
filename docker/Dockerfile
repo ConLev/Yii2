@@ -1,5 +1,5 @@
 # Базовый образ с nginx и php
-FROM richarvey/nginx-php-fpm
+FROM richarvey/nginx-php-fpm:1.8.2
 
 # Добавляем наше веб приложение
 ADD advanced /var/www/advanced
